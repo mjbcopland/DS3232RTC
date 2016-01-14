@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------*
  * DS3232RTC.h - Arduino library for the Maxim Integrated DS3232        *
- * Real-Time Clock. This library is intended for use with the Arduino   *
- * Time.h library, http://www.arduino.cc/playground/Code/Time           *
+ * Real-Time Clock. This library is intended for use with the Time      *
+ * library (http://www.pjrc.com/teensy/td_libs_Time.html)               *
  *                                                                      *
  * This library is a modified verion of Jack Christensen's DS3232RTC    *
  * library. http://github.com/JChristensen/DS3232RTC                    *

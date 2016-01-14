@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------*
  * DS3232RTC.h - Arduino library for the Maxim Integrated DS3232        *
- * Real-Time Clock. This library is intended for use with the Arduino   *
- * Time.h library, http://www.arduino.cc/playground/Code/Time           *
+ * Real-Time Clock. This library is intended for use with the Time      *
+ * library (http://www.pjrc.com/teensy/td_libs_Time.html)               *
  *                                                                      *
  * This library is a modified verion of Jack Christensen's DS3232RTC    *
  * library. http://github.com/JChristensen/DS3232RTC                    *
@@ -27,7 +27,7 @@
  *                                                                      *
  * CC BY-SA 4.0                                                         *
  * http://creativecommons.org/licenses/by-sa/4.0/                       *
- *----------------------------------------------------------------------*/ 
+ *----------------------------------------------------------------------*/  
 
 #include <DS3232RTC.h>
 #include <Wire.h>
@@ -142,15 +142,7 @@ uint8_t DS3232RTC::read(register_t addr) {
  * Returns the number of bytes read.                                    *
  *----------------------------------------------------------------------*/
 uint8_t DS3232RTC::read(register_t addr, uint8_t *values, uint8_t n) {
-  /* This function should do what we want in a single call but for some
-   * reason the compiler can't see it:
-   * uint8_t r = Wire.requestFrom(RTC_ADDR, n, addr, 1, true); */
-
-  // Instead, we call the individual methods that the above would have otherwise executed.
-  Wire.beginTransmission(RTC_ADDR);
-  Wire.write(addr);
-  Wire.endTransmission(false);
-  uint8_t r = Wire.requestFrom(RTC_ADDR, n);
+  uint8_t r = Wire.requestFrom(RTC_ADDR, n, addr, 1, true);
 
   for (uint8_t i = 0; i < r; i++) values[i] = Wire.read();
   return r;
