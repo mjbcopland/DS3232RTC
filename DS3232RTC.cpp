@@ -148,6 +148,12 @@ uint8_t DS3232RTC::read(register_t addr, uint8_t *values, uint8_t n) {
   return r;
 }
 
+/*----------------------------------------------------------------------*
+ * Get an alarm time and type. This method can get either Alarm 1 or    *
+ * Alarm 2, depending on the value of alarmNumber (use a value from     *
+ * the alarm_t enumeration).                                            *
+ * Returns true if successful.                                          *
+ *----------------------------------------------------------------------*/
 bool DS3232RTC::getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElements_t *tm) {
   uint8_t *ptr = (uint8_t*)tm;
 
@@ -181,7 +187,7 @@ bool DS3232RTC::getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElemen
 }
 
 /*----------------------------------------------------------------------*
- * Set an alarm time. Sets the alarm registers only.  To cause the      *
+ * Set an alarm time. Sets the alarm registers only. To cause the       *
  * INT pin to be asserted on alarm match, use alarmInterrupt().         *
  * This method can set either Alarm 1 or Alarm 2, depending on the      *
  * value of alarmNumber (use a value from the alarm_t enumeration).     *

@@ -150,7 +150,7 @@ class DS3232RTC {
         static bool write(register_t addr, uint8_t *values, uint8_t n);
 
         static uint8_t read(register_t addr);
-        static uint8_t read(register_t addr, uint8_t *values, uint8_t ns);
+        static uint8_t read(register_t addr, uint8_t *values, uint8_t n);
 
         static bool setAlarm(alarm_t alarmNumber, alarmTypes_t alarmType, almElements_t tm = {0});
 
@@ -168,7 +168,7 @@ class DS3232RTC {
 
     private:
         static inline uint8_t __attribute__((always_inline)) dec2bcd(uint8_t n) { return n + 6*(n / 10); }
-        static inline uint8_t __attribute__((always_inline)) bcd2dec(uint8_t n) { return n - 6*(n >> 4); }
+        static inline uint8_t __attribute__((always_inline)) bcd2dec(uint8_t n) { return n - 6*(n / 16); }
 };
 
 extern DS3232RTC RTC;
