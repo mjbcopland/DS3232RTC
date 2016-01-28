@@ -36,9 +36,6 @@
 #include <Time.h>
 #include <inttypes.h>
 
-// DS3232 I2C Address
-const uint8_t RTC_ADDR = 0x68;
-
 // DS3232 Register Addresses -- default values are correct
 typedef enum {
   RTC_SECONDS,
@@ -167,6 +164,7 @@ class DS3232RTC {
         static int16_t temperature(void);
 
     private:
+        static const uint8_t I2C_ADDR = 0x68;
         static inline uint8_t __attribute__((always_inline)) dec2bcd(uint8_t n) { return n + 6*(n / 10); }
         static inline uint8_t __attribute__((always_inline)) bcd2dec(uint8_t n) { return n - 6*(n / 16); }
 };

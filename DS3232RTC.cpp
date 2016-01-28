@@ -117,7 +117,7 @@ bool DS3232RTC::write(register_t addr, uint8_t value) {
  * Returns true if successful.                                          *
  *----------------------------------------------------------------------*/
 bool DS3232RTC::write(register_t addr, uint8_t *values, uint8_t n) {
-  Wire.beginTransmission(RTC_ADDR);
+  Wire.beginTransmission(I2C_ADDR);
   Wire.write(addr);
   for (uint8_t i = 0; i < n; i++) Wire.write(values[i]);
   return Wire.endTransmission() == 0;
@@ -142,8 +142,7 @@ uint8_t DS3232RTC::read(register_t addr) {
  * Returns the number of bytes read.                                    *
  *----------------------------------------------------------------------*/
 uint8_t DS3232RTC::read(register_t addr, uint8_t *values, uint8_t n) {
-  uint8_t r = Wire.requestFrom(RTC_ADDR, n, addr, 1, true);
-
+  uint8_t r = Wire.requestFrom(I2C_ADDR, n, addr, 1, true);
   for (uint8_t i = 0; i < r; i++) values[i] = Wire.read();
   return r;
 }
@@ -295,11 +294,12 @@ bool DS3232RTC::oscStopped(bool clearOSF) {
 }
 
 /*----------------------------------------------------------------------*
- * Returns the temperature in Celsius times four.                       *
+ * Returns the temperature in Celsius times four if successful,         *
+ * -(2^15) otherwise.                                                   *
  *----------------------------------------------------------------------*/
 int16_t DS3232RTC::temperature() {
   uint16_t temp;
-  if (read(TEMP_MSB, (uint8_t*)&temp, 2) != 2) return false;
+  if (read(TEMP_MSB, (uint8_t*)&temp, 2) != 2) return _BV(15);
   return temp / 64;
 }
 
