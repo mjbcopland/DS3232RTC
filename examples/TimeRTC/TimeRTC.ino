@@ -7,48 +7,42 @@
  */
 
 #include <DS3232RTC.h>
-#include <Time.h>         //http://www.arduino.cc/playground/Code/Time  
-#include <Wire.h>         //http://arduino.cc/en/Reference/Wire (included with Arduino IDE)
+
+const char weekdays[7][4] = {
+  "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+};
 
 void setup() {
-    Serial.begin(9600);
-    while (!Serial) continue;
+  fdevopen([](char c, FILE (*)){Serial.write(c); return 1;}, NULL);
+  Serial.begin(115200);
+  while (!Serial) continue;
 
-    time_t t;
-    if (RTC.get(&t)) {
-        setSyncProvider([](){return RTC.get(&t) ? t : 0;});   // the function to get the time from the RTC
-        if(timeStatus() != timeSet) {
-            Serial.println("Unable to sync with the RTC");
-        } else {
-            Serial.println("RTC has set the system time");      
-        }
+  time_t t;
+  if (RTC.get(t)) {
+    setSyncProvider([]{time_t t; return RTC.get(t) ? t : 0;});
+
+    if (timeStatus() != timeSet) {
+      printf("Unable to sync with the RTC. Using internal clock.\n");
     } else {
-        Serial.print("RTC read error!  Please check the circuitry.");
+      printf("RTC has set the system time.\n");
     }
+  } else {
+    printf("RTC read error! Please check the circuitry.\n");
+    Serial.flush();
+    exit(EXIT_FAILURE);
+  }
 }
 
 void loop() {
-    digitalClockDisplay();  
-    delay(1000);
-}
-
-void digitalClockDisplay() {
-    // digital clock display of the time
-    Serial.print(hour());
-    printDigits(minute());
-    printDigits(second());
-    Serial.print(' ');
-    Serial.print(day());
-    Serial.print(' ');
-    Serial.print(month());
-    Serial.print(' ');
-    Serial.print(year()); 
-    Serial.println(); 
-}
-
-void printDigits(int digits) {
-    // utility function for digital clock display: prints preceding colon and leading 0
-    Serial.print(':');
-    if (digits < 10) Serial.print('0');
-    Serial.print(digits);
+  printf(
+    "%02d:%02d:%02d %s %d/%d/%d\n",
+    hour(),
+    minute(),
+    second(),
+    weekdays[weekday()],
+    day(),
+    month(),
+    year()
+  );
+  delay(1000);
 }
