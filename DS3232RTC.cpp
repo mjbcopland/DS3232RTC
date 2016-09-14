@@ -27,7 +27,7 @@
  *                                                                      *
  * CC BY-SA 4.0                                                         *
  * http://creativecommons.org/licenses/by-sa/4.0/                       *
- *----------------------------------------------------------------------*/  
+ *----------------------------------------------------------------------*/
 
 #include <DS3232RTC.h>
 #include <Wire.h>
@@ -45,11 +45,11 @@ DS3232RTC::DS3232RTC() {
  * Assumes 24hr mode and that the Century bit is 0.                     *
  * If using a DS1307, assumes that the oscillator is running.           *
  *----------------------------------------------------------------------*/
-bool DS3232RTC::get(time_t *t) {
+bool DS3232RTC::get(time_t &t) {
   tmElements_t tm;
 
-  if (get(&tm)) {
-    *t = makeTime(tm);
+  if (get(tm)) {
+    t = makeTime(tm);
     return true;
   } else {
     return false;
@@ -62,13 +62,13 @@ bool DS3232RTC::get(time_t *t) {
  * Assumes 24hr mode and that the Century bit is 0.                     *
  * If using a DS1307, assumes that the oscillator is running.           *
  *----------------------------------------------------------------------*/
-bool DS3232RTC::get(tmElements_t *tm) { 
-  uint8_t *ptr = (uint8_t*)tm;
+bool DS3232RTC::get(tmElements_t &tm) {
+  uint8_t *ptr = (uint8_t*)&tm;
   if (read(RTC_SECONDS, ptr, tmNbrFields) == tmNbrFields) {
     for (uint8_t i = 0; i < tmNbrFields; i++) {
       ptr[i] = bcd2dec(ptr[i]);
     }
-    tm->Year = y2kYearToTm(tm->Year);
+    tm.Year = y2kYearToTm(tm.Year);
     return true;
   } else {
     return false;
@@ -213,7 +213,7 @@ bool DS3232RTC::setAlarm(alarm_t alarmNumber, alarmTypes_t alarmType, almElement
     default:
       break;
   }
-  
+
   switch (alarmNumber) {
     case ALARM_1:
       return write(ALM1_SECONDS, ptr, almNbrFields);
@@ -284,7 +284,7 @@ bool DS3232RTC::squareWave(sqwaveFreqs_t freq) {
  *----------------------------------------------------------------------*/
 bool DS3232RTC::oscStopped(bool clearOSF) {
   uint8_t s = read(RTC_STATUS);
-  
+
   if (s & _BV(OSF)) {
     if (clearOSF) write(RTC_STATUS, s & ~_BV(OSF));
     return true;

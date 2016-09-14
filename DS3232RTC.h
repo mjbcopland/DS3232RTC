@@ -27,14 +27,11 @@
  *                                                                      *
  * CC BY-SA 4.0                                                         *
  * http://creativecommons.org/licenses/by-sa/4.0/                       *
- *----------------------------------------------------------------------*/ 
+ *----------------------------------------------------------------------*/
 
-#ifndef DS3232RTC_h
-#define DS3232RTC_h
+#pragma once
 
-#include <Arduino.h>
-#include <Time.h>
-#include <inttypes.h>
+#include <TimeLib.h>
 
 // DS3232 Register Addresses -- default values are correct
 typedef enum {
@@ -57,8 +54,8 @@ typedef enum {
   RTC_AGING,
   TEMP_MSB,
   TEMP_LSB,
-  SRAM_START_ADDR = 0x14,   //first SRAM address
-  SRAM_SIZE = 236           //number of uint8_ts of SRAM
+  SRAM_START_ADDR = 0x14, // first SRAM address
+  SRAM_SIZE = 236         // number of uint8_ts of SRAM
 } register_t;
 
 // Control register bit values -- default values are correct
@@ -118,10 +115,10 @@ typedef enum {
 } alarm_t;
 
 typedef enum {
-  DYDT_FLAG  = 6,     // Day/Date flag bit in alarm Day/Date registers (day is high)
-  HR1224     = 6,     // Hours register 12 or 24 hour mode (24 hour mode == 0)
-  DS1307_CH  = 7,     // for DS1307 compatibility, Clock Halt bit in Seconds register
-  CENTURY    = 7,     // Century bit in Month register
+  DYDT_FLAG  = 6, // Day/Date flag bit in alarm Day/Date registers (day is high)
+  HR1224     = 6, // Hours register 12 or 24 hour mode (24 hour mode == 0)
+  DS1307_CH  = 7, // for DS1307 compatibility, Clock Halt bit in Seconds register
+  CENTURY    = 7, // Century bit in Month register
   ALARM_MASK = 7
 } otherBitValues_t;
 
@@ -134,41 +131,39 @@ typedef struct {
 } almElements_t, AlarmElements, *almElementsPtr_t;
 
 class DS3232RTC {
-    public:
-        DS3232RTC();
+public:
+  DS3232RTC();
 
-        static bool get(time_t *t);
-        static bool get(tmElements_t *tm);
+  static bool get(time_t &t);
+  static bool get(tmElements_t &tm);
 
-        static bool set(time_t t);
-        static bool set(tmElements_t tm);
+  static bool set(time_t t);
+  static bool set(tmElements_t tm);
 
-        static bool write(register_t addr, uint8_t value);
-        static bool write(register_t addr, uint8_t *values, uint8_t n);
+  static bool write(register_t addr, uint8_t value);
+  static bool write(register_t addr, uint8_t *values, uint8_t n);
 
-        static uint8_t read(register_t addr);
-        static uint8_t read(register_t addr, uint8_t *values, uint8_t n);
+  static uint8_t read(register_t addr);
+  static uint8_t read(register_t addr, uint8_t *values, uint8_t n);
 
-        static bool setAlarm(alarm_t alarmNumber, alarmTypes_t alarmType, almElements_t tm = {0});
+  static bool setAlarm(alarm_t alarmNumber, alarmTypes_t alarmType, almElements_t tm = {0,0,0,0});
 
-        static bool getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElements_t *tm);
+  static bool getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElements_t *tm);
 
-        static bool alarmInterrupt(alarm_t alarmNumber, bool alarmEnabled);
+  static bool alarmInterrupt(alarm_t alarmNumber, bool alarmEnabled);
 
-        static bool alarm(alarm_t alarmNumber, bool clearAlarm = true);
+  static bool alarm(alarm_t alarmNumber, bool clearAlarm = true);
 
-        static bool squareWave(sqwaveFreqs_t freq);
+  static bool squareWave(sqwaveFreqs_t freq);
 
-        static bool oscStopped(bool clearOSF = true);
+  static bool oscStopped(bool clearOSF = true);
 
-        static int16_t temperature(void);
+  static int16_t temperature(void);
 
-    private:
-        static const uint8_t I2C_ADDR = 0x68;
-        static inline uint8_t __attribute__((always_inline)) dec2bcd(uint8_t n) { return n + 6*(n / 10); }
-        static inline uint8_t __attribute__((always_inline)) bcd2dec(uint8_t n) { return n - 6*(n / 16); }
+private:
+  static const uint8_t I2C_ADDR = 0x68;
+  static inline uint8_t dec2bcd(uint8_t n) __attribute__((always_inline)) { return n + 6*(n / 10); }
+  static inline uint8_t bcd2dec(uint8_t n) __attribute__((always_inline)) { return n - 6*(n / 16); }
 };
 
 extern DS3232RTC RTC;
-
-#endif
