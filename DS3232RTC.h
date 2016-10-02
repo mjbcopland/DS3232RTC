@@ -34,7 +34,7 @@
 #include <TimeLib.h>
 
 // DS3232 Register Addresses -- default values are correct
-typedef enum {
+enum register_t {
   RTC_SECONDS,
   RTC_MINUTES,
   RTC_HOURS,
@@ -56,10 +56,10 @@ typedef enum {
   TEMP_LSB,
   SRAM_START_ADDR = 0x14, // first SRAM address
   SRAM_SIZE = 236         // number of uint8_ts of SRAM
-} register_t;
+};
 
 // Control register bit values -- default values are correct
-typedef enum {
+enum controlBitValues_t {
   A1IE,
   A2IE,
   INTCN,
@@ -68,10 +68,10 @@ typedef enum {
   CONV,
   BBSQW,
   EOSC
-} controlBitValues_t;
+};
 
 // Status register bit values -- default values are correct
-typedef enum {
+enum statusBitValues_t {
   A1F,
   A2F,
   BSY,
@@ -80,19 +80,19 @@ typedef enum {
   CRATE1,
   BB32KHZ,
   OSF
-} statusBitValues_t;
+};
 
 // Square-wave output frequency (TS2, RS1 bits)
-typedef enum {
+enum sqwaveFreqs_t {
   SQWAVE_1_HZ,
   SQWAVE_1024_HZ,
   SQWAVE_4096_HZ,
   SQWAVE_8192_HZ,
   SQWAVE_NONE
-} sqwaveFreqs_t;
+};
 
 // Alarm masks
-typedef enum {
+enum alarmTypes_t {
   MATCH_ANY     = 0x0F,
   MATCH_SECONDS = 0x0E,
   MATCH_MINUTES = 0x0C,
@@ -107,28 +107,31 @@ typedef enum {
   EVERY_DAY     = MATCH_HOURS,
   EVERY_WEEK    = MATCH_DAY,
   EVERY_YEAR    = MATCH_DATE
-} alarmTypes_t;
+};
 
-typedef enum {
+enum alarm_t {
   ALARM_1,
   ALARM_2
-} alarm_t;
+};
 
-typedef enum {
+enum otherBitValues_t {
   DYDT_FLAG  = 6, // Day/Date flag bit in alarm Day/Date registers (day is high)
   HR1224     = 6, // Hours register 12 or 24 hour mode (24 hour mode == 0)
   DS1307_CH  = 7, // for DS1307 compatibility, Clock Halt bit in Seconds register
   CENTURY    = 7, // Century bit in Month register
   ALARM_MASK = 7
-} otherBitValues_t;
+};
 
-typedef enum {
+enum almByteFields {
   almSecond, almMinute, almHour, almDayDate, almNbrFields
-} almByteFields;
+};
 
-typedef struct {
+struct almElements_t {
   uint8_t Second, Minute, Hour, DayDate;
-} almElements_t, AlarmElements, *almElementsPtr_t;
+};
+
+using AlarmElements    = almElements_t;
+using almElementsPtr_t = almElements_t *;
 
 class DS3232RTC {
 public:
