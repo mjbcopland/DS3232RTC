@@ -148,7 +148,7 @@ public:
 
   static bool setAlarm(alarm_t alarmNumber, alarmTypes_t alarmType, almElements_t tm = {0,0,0,0});
 
-  static bool getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElements_t *tm);
+  static bool getAlarm(alarm_t alarmNumber, alarmTypes_t &alarmType, almElements_t &tm);
 
   static bool alarmInterrupt(alarm_t alarmNumber, bool alarmEnabled);
 

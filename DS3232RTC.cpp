@@ -153,8 +153,8 @@ uint8_t DS3232RTC::read(register_t addr, uint8_t *values, uint8_t n) {
  * the alarm_t enumeration).                                            *
  * Returns true if successful.                                          *
  *----------------------------------------------------------------------*/
-bool DS3232RTC::getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElements_t *tm) {
-  uint8_t *ptr = (uint8_t*)tm;
+bool DS3232RTC::getAlarm(alarm_t alarmNumber, alarmTypes_t &alarmType, almElements_t &tm) {
+  uint8_t *ptr = (uint8_t*)&tm;
 
   switch (alarmNumber) {
     case ALARM_1:
@@ -162,7 +162,7 @@ bool DS3232RTC::getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElemen
       break;
 
     case ALARM_2:
-      tm->Second = 0;
+      tm.Second = 0;
       if (!read(ALM2_MINUTES, ptr+1, almNbrFields-1) == almNbrFields-1) return false;
       break;
 
@@ -170,16 +170,16 @@ bool DS3232RTC::getAlarm(alarm_t alarmNumber, alarmTypes_t *alarmType, almElemen
       return false;
   }
 
-  *alarmType = MATCH_ANY;
+  alarmType = MATCH_ANY;
 
   for (uint8_t i = 0; i < almNbrFields; i++) {
     if (ptr[i] & _BV(ALARM_MASK)) {
-      *alarmType = (alarmTypes_t)(*alarmType | _BV(i));
+      alarmType = (alarmTypes_t)(alarmType | _BV(i));
     }
   }
 
   if (ptr[almDayDate] & _BV(DYDT_FLAG)) {
-    *alarmType = (alarmTypes_t)(*alarmType | MATCH_DAY);
+    alarmType = (alarmTypes_t)(alarmType | MATCH_DAY);
   }
 
   return true;
