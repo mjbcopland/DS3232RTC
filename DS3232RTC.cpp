@@ -295,12 +295,12 @@ bool DS3232RTC::oscStopped(bool clearOSF) {
 
 /*----------------------------------------------------------------------*
  * Returns the temperature in Celsius times four if successful,         *
- * -(2^15) otherwise.                                                   *
+ * INT16_MIN otherwise.                                                 *
  *----------------------------------------------------------------------*/
 int16_t DS3232RTC::temperature() {
-  uint16_t temp;
-  if (read(TEMP_MSB, (uint8_t*)&temp, 2) != 2) return _BV(15);
-  return temp / 64;
+  uint8_t buf[2];
+  if (read(TEMP_MSB, buf, 2) != 2) return INT16_MIN;
+  return (buf[0] << 2) | (buf[1] >> 6);
 }
 
 DS3232RTC RTC;
